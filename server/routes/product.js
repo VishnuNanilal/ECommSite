@@ -5,69 +5,21 @@ const {
 	verifyTokenAndAdmin,
 } = require("../routes/verifyToken");
 const Product = require("../models/product");
+const productCtrl = require("../controllers/product.controller")
 
 //create
-router.post("/", verifyTokenAndAdmin, async (req, res) => {
-     const newProduct = new Product(req.body)
-     try {
-          const product = await newProduct.save();
-          res.status(200).send(product);
-     } catch (err) {
-          res.status(500).send(err);
-     }
-})
+router.post("/", verifyTokenAndAdmin, productCtrl.createProduct);
 
 //update
-router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
-     try {
-          const updatedProd = await Product.findByIdAndUpdate(req.params.id,{$set: req.body}, { new: true });
-          res.status(200).send(updatedProd);
-     } catch (err) {
-          res.status(500).send(err);
-     }
-})
+router.put("/:id", verifyTokenAndAdmin, productCtrl.updateProductById);
 
 //delete
-router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
-     try {
-          await Product.findByIdAndDelete(req.params.id);
-          res.status(200).send("Product deleted");
-     }catch(err){
-          res.status(500).send(err);
-     }
-})
+router.delete("/:id", verifyTokenAndAdmin, productCtrl.deleteProductById);
 
 //get product
-router.get("/:id", async (req, res) => {
-     try {
-          const prod = await Product.findById(req.params.id);
-          res.status(200).send(prod);
-     } catch (err) {
-          res.status(500).send(err);
-     }
-})
+router.get("/:id", productCtrl.getProductById);
 
 //get all products
-router.get("/", async (req, res) => {
-     const qNew = req.query.new;
-     const qCategory = req.query.category;
-     try {
-          let products;
-          if (qNew) {
-               products = await Product.find().sort({ createdAt: -1 }).limit(5);
-          } else if (qCategory) {
-               products = await Product.find({
-                    categories: {
-                         $in :[qCategory]
-                    }
-               });
-          }else {
-               products = await Product.find();
-          }
-          res.status(200).send(products);
-     } catch (err) {
-          res.status(500).send(err);
-     }
-})
+router.get("/", productCtrl.getAllProductsById);
 
 module.exports = router;
