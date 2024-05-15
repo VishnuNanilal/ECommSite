@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const {verifyToken, verifyTokenAndAuth, verifyTokenAndAdmin} = require("../routes/verifyToken");
 const User = require("../models/user");
-const userCtrl = require("../controllers/controller.user")
+const userCtrl = require("../controllers/user.controller")
 
 //update
 router.put("/:id", verifyTokenAndAuth, userCtrl.updateById);
